@@ -1,7 +1,12 @@
-import PageObjects.ForgotPassPage;
-import PageObjects.LoginPage;
-import PageObjects.MainPage;
-import PageObjects.RegisterPage;
+import browser.factory.BrowserFactory;
+import com.github.javafaker.Faker;
+import io.restassured.response.Response;
+import models.UserApi;
+import models.UserModel;
+import ru.yandex.pracktikum.page.objects.ForgotPassPage;
+import ru.yandex.pracktikum.page.objects.LoginPage;
+import ru.yandex.pracktikum.page.objects.MainPage;
+import ru.yandex.pracktikum.page.objects.RegisterPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
@@ -14,11 +19,37 @@ import static org.junit.Assert.assertTrue;
 public class LoginTests {
     private WebDriver driver;
     private final String BASE_URL = "https://stellarburgers.nomoreparties.site";
+    private UserApi userApi;
+    private UserModel testUser;
+    private String accessToken;
+    private Faker faker;
+
     @Before
     public void setUp() {
         // Установка драйвера для Chrome
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        driver = BrowserFactory.createDriver();
+        faker = new Faker();
+        userApi = new UserApi();
+
+        // Создание тестового пользователя через API
+        testUser = new UserModel(
+                faker.internet().emailAddress(),
+                faker.internet().password(8, 12),
+                faker.name().username()
+        );
+
+        Response registerResponse = userApi.registerUser(testUser);
+        accessToken = registerResponse.jsonPath().getString("accessToken");
+    }
+
+    @After
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+        if (accessToken != null) {
+            userApi.deleteUser(accessToken);
+        }
     }
 
     @Test
@@ -29,7 +60,9 @@ public class LoginTests {
         mainPage.clickEnterLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        assertTrue("Форма логина не отображается", loginPage.isLoginFormDisplayed());
+        loginPage.login(testUser.getEmail(), testUser.getPassword());
+
+        assertTrue("Логин не выполнен", mainPage.isOrderButtonVisible());
     }
 
     @Test
@@ -40,7 +73,7 @@ public class LoginTests {
         mainPage.clickPaLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        assertTrue("Форма логина не отображается", loginPage.isLoginFormDisplayed());
+        assertTrue("Форма логина не отображается", loginPage.isLoginButtonDisplayed());
     }
 
     @Test
@@ -51,7 +84,7 @@ public class LoginTests {
         registerPage.clickRegPageloginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        assertTrue("Форма логина не отображается", loginPage.isLoginFormDisplayed());
+        assertTrue("Форма логина не отображается", loginPage.isLoginButtonDisplayed());
     }
 
     @Test
@@ -62,11 +95,6 @@ public class LoginTests {
         forgotPassPage.clickForgotPassPageLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        assertTrue("Форма логина не отображается", loginPage.isLoginFormDisplayed());
-    }
-
-    @After
-    public void tearDown() {
-        driver.quit();
+        assertTrue("Форма логина не отображается", loginPage.isLoginButtonDisplayed());
     }
 }

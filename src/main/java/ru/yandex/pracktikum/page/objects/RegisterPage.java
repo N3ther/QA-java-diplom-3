@@ -1,5 +1,6 @@
-package PageObjects;
+package ru.yandex.pracktikum.page.objects;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,43 +9,44 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class RegisterPage {
-    private WebDriver driver;
-    private WebDriverWait wait;
-    private By nameField = By.xpath("//input[contains(@class, 'input__textfield') and @name='name']");
-    private By registerEmailField = By.xpath("//label[normalize-space()='Email']/following-sibling::input");
-    private By registerPasswordField = By.xpath("//input[@name='Пароль']");
-    private By registedButton = By.xpath("//*[@id=\"root\"]/div/main/div/form/button");
-    private By regPageloginButton = By.xpath("//*[@id=\"root\"]/div/main/div/div/p/a");
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+    private final By nameField = By.cssSelector("input[name='name']");
+    private final By registerEmailField = By.xpath("//label[normalize-space()=\"Email\"]/following-sibling::input");
+    private final By registerPasswordField = By.cssSelector("input[name='Пароль']");
+    private final By registedButton = By.xpath("//button[text()='Зарегистрироваться']");
+    private final By regPageloginButton = By.cssSelector("a[href='/login']");
 
     public RegisterPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 10);
     }
 
-
-
+    @Step("Set name {name}")
     public void setName(String name) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameField));
-        element.click();
         element.clear();
         element.sendKeys(name);
     }
 
+    @Step("Set email {email}")
     public void setRegisterEmail(String email) {
         driver.findElement(registerEmailField).sendKeys(email);
     }
 
+    @Step("Set password {password}")
     public void setRegisterPassword(String password) {
         driver.findElement(registerPasswordField).sendKeys(password);
     }
 
+    @Step("Click registration button")
     public void clickRegistedButton() {
         driver.findElement(registedButton).click();
     }
 
-    //кнопка войти на странице регистрации
+    @Step("Click login link on registration page")
     public void clickRegPageloginButton() {
         driver.findElement(regPageloginButton).click();
     }
-
 }

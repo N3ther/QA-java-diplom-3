@@ -1,5 +1,6 @@
-package PageObjects;
+package ru.yandex.pracktikum.page.objects;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -8,13 +9,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class PaPage {
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    private By exitButton = By.xpath("//button[normalize-space()='Выход']");
-    private By constructButton = By.xpath("//p[normalize-space()='Конструктор']/parent::a");
-    private By sbLogo = By.xpath("//*[@id=\"root\"]/div/header/nav/div");
+    private final By exitButton = By.xpath("//button[text()='Выход']");
+    private final By constructButton = By.xpath("//a[p/text()='Конструктор']");
+    private final By sbLogo = By.cssSelector("div.AppHeader_header__logo__2D0X2");
 
     public By getExitButton() { return exitButton; }
 
@@ -22,22 +22,24 @@ public class PaPage {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 10);
     }
-    //кнопка выход
+
+    @Step("Нажать кнопку 'Выход'")
     public void clickExitButton() {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(exitButton)).click();
     }
-    //кнопка конструктор
+
+    @Step("Нажать кнопку 'Конструктор'")
     public void clickConstructButton() {
         driver.findElement(constructButton).click();
     }
-    //кнопка лого
+
+    @Step("Нажать логотип Stellar Burgers")
     public void clickSbLogo() {
         driver.findElement(sbLogo).click();
     }
 
+    @Step("Проверить видимость кнопки выхода")
     public boolean isExitButtonVisible() {
         return driver.findElement(exitButton).isDisplayed();
     }
-
 }
