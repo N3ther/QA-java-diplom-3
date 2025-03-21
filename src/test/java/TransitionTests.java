@@ -1,6 +1,6 @@
 import browser.factory.BrowserFactory;
 import com.github.javafaker.Faker;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import models.UserApi;
 import models.UserModel;
@@ -56,6 +56,7 @@ public class TransitionTests {
         performLogin();
     }
 
+    @Step("Выполнить вход в систему")
     private void performLogin() {
         driver.get(BASE_URL);
         mainPage.clickEnterLoginButton();

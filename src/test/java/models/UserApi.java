@@ -20,13 +20,6 @@ public class UserApi {
                 .post(BASE_URL + "login");
     }
 
-    public Response updateUser(String token, UserModel user) {
-        return RestAssured.given()
-                .contentType("application/json")
-                .auth().oauth2(token)
-                .body(user)
-                .patch(BASE_URL + "user");
-    }
 
     public Response deleteUser(String token) {
         return RestAssured.given()

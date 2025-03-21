@@ -23,29 +23,29 @@ public class RegisterPage {
         this.wait = new WebDriverWait(driver, 10);
     }
 
-    @Step("Set name {name}")
+    @Step("Указать имя {name}")
     public void setName(String name) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameField));
         element.clear();
         element.sendKeys(name);
     }
 
-    @Step("Set email {email}")
+    @Step("Указать email {email}")
     public void setRegisterEmail(String email) {
         driver.findElement(registerEmailField).sendKeys(email);
     }
 
-    @Step("Set password {password}")
+    @Step("Указать пароль {password}")
     public void setRegisterPassword(String password) {
         driver.findElement(registerPasswordField).sendKeys(password);
     }
 
-    @Step("Click registration button")
+    @Step("Нажать кнопку регистрации")
     public void clickRegistedButton() {
         driver.findElement(registedButton).click();
     }
 
-    @Step("Click login link on registration page")
+    @Step("Нажать ссылку входа на странице регистрации")
     public void clickRegPageloginButton() {
         driver.findElement(regPageloginButton).click();
     }

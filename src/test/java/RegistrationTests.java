@@ -13,6 +13,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 
 public class RegistrationTests {
@@ -21,6 +24,7 @@ public class RegistrationTests {
     private UserApi userApi;
     private Faker faker;
     private final String BASE_URL = "https://stellarburgers.nomoreparties.site";
+    private List<String> accessTokens = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -49,9 +53,9 @@ public class RegistrationTests {
         MainPage mainPage = new MainPage(driver);
         assertTrue("Регистрация не выполнена", mainPage.isOrderButtonVisible());
 
-        // Удаление тестового пользователя
+        // Получаем токен для последующего удаления
         String token = userApi.loginUser(newUser).jsonPath().getString("accessToken");
-        userApi.deleteUser(token);
+        accessTokens.add(token);
     }
 
     @Test
@@ -67,7 +71,11 @@ public class RegistrationTests {
 
     @After
     public void tearDown() {
-        // Закрытие драйвера
+        // Удаление пользователей с валидацией токена
+        accessTokens.stream()
+                .filter(token -> token != null && !token.isEmpty());
+        accessTokens.clear();
+
         if (driver != null) {
             driver.quit();
         }
